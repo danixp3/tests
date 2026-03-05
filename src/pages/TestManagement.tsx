@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-// ScrollArea import removed
 import { 
   Table, 
   TableBody, 
@@ -34,7 +34,9 @@ import {
   Eye,
   EyeOff,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { 
   getThemes, 
@@ -64,6 +66,7 @@ const iconOptions = [
 
 export default function TestManagement() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   
   const [themes, setThemes] = useState<Theme[]>([]);
@@ -281,7 +284,7 @@ export default function TestManagement() {
 
   // ============== TOGGLE FUNCTIONS ==============
   
-  const toggleTheme = (themeId: string) => {
+  const toggleThemeExpansion = (themeId: string) => {
     setExpandedThemes(prev => 
       prev.includes(themeId) ? prev.filter(id => id !== themeId) : [...prev, themeId]
     );
@@ -329,6 +332,17 @@ export default function TestManagement() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Botón Modo Oscuro */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-gray-500 hover:text-gray-700"
+                title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -545,7 +559,7 @@ export default function TestManagement() {
                     return (
                       <div key={theme.id} className="border rounded-lg overflow-hidden">
                         <button
-                          onClick={() => toggleTheme(theme.id)}
+                          onClick={() => toggleThemeExpansion(theme.id)}
                           className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
                           <div className="flex items-center gap-3">
@@ -645,7 +659,7 @@ export default function TestManagement() {
                     return (
                       <div key={theme.id} className="border rounded-lg overflow-hidden">
                         <button
-                          onClick={() => toggleTheme(theme.id)}
+                          onClick={() => toggleThemeExpansion(theme.id)}
                           className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
                           <div className="flex items-center gap-3">

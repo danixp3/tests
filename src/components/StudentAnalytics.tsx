@@ -20,6 +20,17 @@ import {
 } from 'lucide-react';
 import { getStudentStats, getUserResults } from '@/services/storage';
 import type { StudentStats, TestResult } from '@/types';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 interface StudentAnalyticsProps {
   userId: string;
@@ -60,6 +71,26 @@ export default function StudentAnalytics({ userId, userName, isOpen, onClose }: 
     return <AlertTriangle className="w-5 h-5 text-red-600" />;
   };
 
+  // Preparar datos para el gráfico de barras
+  const getChartData = () => {
+    if (!stats) return [];
+    return stats.themeStats.map(stat => ({
+      name: stat.themeName.length > 15 ? stat.themeName.substring(0, 15) + '...' : stat.themeName,
+      fullName: stat.themeName,
+      errorRate: stat.errorRate,
+      correctRate: Math.round((stat.correctAnswers / stat.totalQuestions) * 100),
+      totalQuestions: stat.totalQuestions,
+      correctAnswers: stat.correctAnswers,
+      incorrectAnswers: stat.incorrectAnswers,
+    }));
+  };
+
+  const getBarColor = (errorRate: number) => {
+    if (errorRate < 20) return '#22c55e'; // verde
+    if (errorRate < 40) return '#eab308'; // amarillo
+    return '#ef4444'; // rojo
+  };
+
   if (loading || !stats) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -72,9 +103,11 @@ export default function StudentAnalytics({ userId, userName, isOpen, onClose }: 
     );
   }
 
+  const chartData = getChartData();
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -136,8 +169,12 @@ export default function StudentAnalytics({ userId, userName, isOpen, onClose }: 
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="themes" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="chart" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="chart" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Gráfico
+            </TabsTrigger>
             <TabsTrigger value="themes" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
               Por Temas
@@ -152,12 +189,111 @@ export default function StudentAnalytics({ userId, userName, isOpen, onClose }: 
             </TabsTrigger>
           </TabsList>
 
+          {/* CHART TAB */}
+          <TabsContent value="chart" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5" />
+                  Gráfico de Porcentaje de Error por Tema
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {stats.themeStats.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="w-4 h-4" />
+                    <AlertDescription>
+                      El estudiante aún no ha completado ningún test.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Gráfico de Barras */}
+                    <div className="h-80 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={chartData}
+                          margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 60,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis 
+                            dataKey="name" 
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                            interval={0}
+                          />
+                          <YAxis 
+                            label={{ value: '% de Error', angle: -90, position: 'insideLeft' }}
+                            domain={[0, 100]}
+                          />
+                          <Tooltip 
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                  <div className="bg-white p-3 border rounded shadow-lg">
+                                    <p className="font-semibold text-gray-900">{data.fullName}</p>
+                                    <p className="text-red-600">{data.errorRate}% de error</p>
+                                    <p className="text-green-600">{data.correctRate}% de acierto</p>
+                                    <p className="text-gray-500 text-sm mt-1">
+                                      {data.correctAnswers} correctas / {data.incorrectAnswers} incorrectas
+                                    </p>
+                                    <p className="text-gray-500 text-sm">
+                                      Total: {data.totalQuestions} preguntas
+                                    </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Legend />
+                          <Bar 
+                            dataKey="errorRate" 
+                            name="% de Error" 
+                            radius={[4, 4, 0, 0]}
+                          >
+                            {chartData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={getBarColor(entry.errorRate)} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Leyenda de colores */}
+                    <div className="flex justify-center gap-6 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-green-500 rounded"></div>
+                        <span>Buen rendimiento (&lt;20% error)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                        <span>Rendimiento medio (20-40% error)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500 rounded"></div>
+                        <span>Necesita mejora (&gt;40% error)</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* THEME ANALYSIS */}
           <TabsContent value="themes" className="mt-4">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5" />
+                  <Target className="w-5 h-5" />
                   Desglose por Temas
                 </CardTitle>
               </CardHeader>

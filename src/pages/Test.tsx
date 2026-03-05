@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +17,9 @@ import {
   ChevronRight,
   Flag,
   RotateCcw,
-  Home
+  Home,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { getTestWithQuestions, saveTestResult, getThemeById } from '@/services/storage';
 import type { Question, TestResult, QuestionResult } from '@/types';
@@ -25,6 +28,7 @@ export default function Test() {
   const { testId } = useParams<{ testId: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   
   const [test, setTest] = useState<(any & { questionData: Question[] }) | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -362,6 +366,17 @@ export default function Test() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Botón Modo Oscuro */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-gray-500 hover:text-gray-700"
+                title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </Button>
+              
               <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                 timeLeft < 60 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
               }`}>

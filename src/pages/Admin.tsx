@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,14 +31,18 @@ import {
   AlertCircle,
   CheckCircle,
   BookOpen,
-  TrendingUp
+  TrendingUp,
+  Moon,
+  Sun,
+  Calendar
 } from 'lucide-react';
-import { getUsers, saveUser, deleteUser } from '@/services/storage';
+import { getUsers, saveUser, deleteUser, getDefaultExpirationDate, isUserExpired } from '@/services/storage';
 import StudentAnalytics from '@/components/StudentAnalytics';
 import type { User as UserType } from '@/types';
 
 export default function Admin() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -105,6 +110,7 @@ export default function Admin() {
       email: formData.email,
       role: formData.role,
       createdAt: new Date().toISOString(),
+      expiresAt: getDefaultExpirationDate(),
     };
 
     saveUser(newUser);
@@ -224,6 +230,17 @@ export default function Admin() {
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Botón Modo Oscuro */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-gray-500 hover:text-gray-700"
+                title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -377,20 +394,23 @@ export default function Admin() {
                   <TableHead>Nombre</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Rol</TableHead>
-                  <TableHead>Fecha de creación</TableHead>
+                  <TableHead>Creación</TableHead>
+                  <TableHead>Expiración</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                       No se encontraron usuarios
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredUsers.map((u) => (
-                    <TableRow key={u.id}>
+                  filteredUsers.map((u) => {
+                    const expired = isUserExpired(u);
+                    return (
+                    <TableRow key={u.id} className={expired ? 'bg-red-50' : ''}>
                       <TableCell className="font-medium">{u.username}</TableCell>
                       <TableCell>{u.name}</TableCell>
                       <TableCell>{u.email || '-'}</TableCell>
@@ -401,6 +421,17 @@ export default function Admin() {
                       </TableCell>
                       <TableCell>
                         {new Date(u.createdAt).toLocaleDateString('es-ES')}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Calendar className={`w-4 h-4 ${expired ? 'text-red-500' : 'text-green-500'}`} />
+                          <span className={expired ? 'text-red-600 font-medium' : ''}>
+                            {new Date(u.expiresAt).toLocaleDateString('es-ES')}
+                          </span>
+                          {expired && (
+                            <Badge variant="destructive" className="text-xs">Caducado</Badge>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -435,7 +466,8 @@ export default function Admin() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

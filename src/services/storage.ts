@@ -684,6 +684,20 @@ function getDefaultTests(): Test[] {
 
 // ============== INICIALIZACIÓN ==============
 
+// Función para calcular fecha de expiración (30 días desde ahora)
+export const getDefaultExpirationDate = (): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + 30);
+  return date.toISOString();
+};
+
+// Función para verificar si un usuario ha expirado
+export const isUserExpired = (user: User): boolean => {
+  const now = new Date();
+  const expiresAt = new Date(user.expiresAt);
+  return now > expiresAt;
+};
+
 export const initializeDefaultData = (): void => {
   const users = getUsers();
   
@@ -697,6 +711,7 @@ export const initializeDefaultData = (): void => {
       email: 'admin@autoescuela.com',
       role: 'admin',
       createdAt: new Date().toISOString(),
+      expiresAt: getDefaultExpirationDate(),
     };
     saveUser(adminUser);
   }

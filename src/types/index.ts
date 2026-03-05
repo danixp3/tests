@@ -8,6 +8,7 @@ export interface User {
   email?: string;
   role: 'student' | 'admin';
   createdAt: string;
+  expiresAt: string; // Fecha de expiración de la cuenta (30 días por defecto)
 }
 
 export interface Question {

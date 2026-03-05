@@ -4,7 +4,8 @@ import {
   getCurrentUser, 
   setCurrentUser, 
   findUserByUsername,
-  initializeDefaultData 
+  initializeDefaultData,
+  isUserExpired
 } from '@/services/storage';
 
 interface AuthContextType extends AuthState {
@@ -55,6 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (user.password !== password) {
         setError('Contraseña incorrecta');
+        return false;
+      }
+
+      // Verificar si el usuario ha expirado
+      if (isUserExpired(user)) {
+        setError('Usuario caducado, contacte con la autoescuela y renueve comprando de nuevo la licencia');
         return false;
       }
 
