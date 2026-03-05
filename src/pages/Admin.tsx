@@ -30,7 +30,6 @@ import {
   GraduationCap,
   AlertCircle,
   CheckCircle,
-  BookOpen,
   TrendingUp,
   Moon,
   Sun,
@@ -63,6 +62,7 @@ export default function Admin() {
     name: '',
     email: '',
     role: 'student' as 'student' | 'admin',
+    expiresAt: '',
   });
 
   useEffect(() => {
@@ -144,6 +144,8 @@ export default function Admin() {
       role: formData.role,
       // Solo actualizar password si se proporcionó una nueva
       password: formData.password.trim() ? formData.password : selectedUser.password,
+      // Actualizar fecha de expiración
+      expiresAt: formData.expiresAt ? new Date(formData.expiresAt).toISOString() : selectedUser.expiresAt,
     };
 
     saveUser(updatedUser);
@@ -182,6 +184,7 @@ export default function Admin() {
       name: user.name,
       email: user.email || '',
       role: user.role,
+      expiresAt: user.expiresAt ? new Date(user.expiresAt).toISOString().split('T')[0] : '',
     });
     setIsEditDialogOpen(true);
   };
@@ -203,6 +206,7 @@ export default function Admin() {
       name: '',
       email: '',
       role: 'student',
+      expiresAt: '',
     });
   };
 
@@ -214,9 +218,9 @@ export default function Admin() {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
@@ -224,8 +228,8 @@ export default function Admin() {
                 <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Autoescuela Test</h1>
-                <p className="text-xs text-gray-500">Panel de Administración</p>
+                <h1 className="text-xl font-bold text-foreground">Autoescuela Test</h1>
+                <p className="text-xs text-muted-foreground">Panel de Administración</p>
               </div>
             </div>
 
@@ -235,7 +239,7 @@ export default function Admin() {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-muted-foreground hover:text-foreground"
                 title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
               >
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
@@ -253,11 +257,11 @@ export default function Admin() {
               
               <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">Administrador</p>
+                  <p className="text-sm font-medium text-foreground">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">Administrador</p>
                 </div>
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary" />
                 </div>
               </div>
 
@@ -265,7 +269,7 @@ export default function Admin() {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
@@ -280,25 +284,17 @@ export default function Admin() {
         <div className="mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Gestión de Usuarios
               </h2>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Administra los usuarios de la plataforma. Puedes añadir, editar o eliminar usuarios.
               </p>
             </div>
             <div className="flex gap-3">
               <Button 
-                variant="outline"
-                onClick={() => navigate('/admin/tests')}
-                className="flex items-center gap-2"
-              >
-                <BookOpen className="w-4 h-4" />
-                Gestionar Tests
-              </Button>
-              <Button 
                 onClick={openAddDialog}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-primary hover:bg-primary/90"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Añadir Usuario
@@ -309,13 +305,13 @@ export default function Admin() {
 
         {/* Messages */}
         {message && (
-          <Alert className={`mb-6 ${message.type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <Alert className={`mb-6 ${message.type === 'success' ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-900' : 'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-900'}`}>
             {message.type === 'success' ? (
-              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
             ) : (
-              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
             )}
-            <AlertDescription className={message.type === 'success' ? 'text-green-700' : 'text-red-700'}>
+            <AlertDescription className={message.type === 'success' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}>
               {message.text}
             </AlertDescription>
           </Alert>
@@ -327,11 +323,11 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Total Usuarios</p>
-                  <p className="text-3xl font-bold text-gray-900">{users.length}</p>
+                  <p className="text-muted-foreground text-sm">Total Usuarios</p>
+                  <p className="text-3xl font-bold text-card-foreground">{users.length}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <User className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <User className="w-6 h-6 text-primary" />
                 </div>
               </div>
             </CardContent>
@@ -341,13 +337,13 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Estudiantes</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-muted-foreground text-sm">Estudiantes</p>
+                  <p className="text-3xl font-bold text-card-foreground">
                     {users.filter(u => u.role === 'student').length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <GraduationCap className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </CardContent>
@@ -357,13 +353,13 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Administradores</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-muted-foreground text-sm">Administradores</p>
+                  <p className="text-3xl font-bold text-card-foreground">
                     {users.filter(u => u.role === 'admin').length}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </CardContent>
@@ -376,7 +372,7 @@ export default function Admin() {
             <div className="flex items-center justify-between">
               <CardTitle>Lista de Usuarios</CardTitle>
               <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Buscar usuarios..."
                   value={searchTerm}
@@ -402,7 +398,7 @@ export default function Admin() {
               <TableBody>
                 {filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       No se encontraron usuarios
                     </TableCell>
                   </TableRow>
@@ -410,12 +406,12 @@ export default function Admin() {
                   filteredUsers.map((u) => {
                     const expired = isUserExpired(u);
                     return (
-                    <TableRow key={u.id} className={expired ? 'bg-red-50' : ''}>
+                    <TableRow key={u.id} className={expired ? 'bg-red-50 dark:bg-red-950/30' : ''}>
                       <TableCell className="font-medium">{u.username}</TableCell>
                       <TableCell>{u.name}</TableCell>
                       <TableCell>{u.email || '-'}</TableCell>
                       <TableCell>
-                        <Badge className={u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}>
+                        <Badge className={u.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'}>
                           {u.role === 'admin' ? 'Administrador' : 'Estudiante'}
                         </Badge>
                       </TableCell>
@@ -425,7 +421,7 @@ export default function Admin() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Calendar className={`w-4 h-4 ${expired ? 'text-red-500' : 'text-green-500'}`} />
-                          <span className={expired ? 'text-red-600 font-medium' : ''}>
+                          <span className={expired ? 'text-red-600 font-medium dark:text-red-400' : ''}>
                             {new Date(u.expiresAt).toLocaleDateString('es-ES')}
                           </span>
                           {expired && (
@@ -440,7 +436,7 @@ export default function Admin() {
                               variant="ghost"
                               size="icon"
                               onClick={() => openAnalytics(u)}
-                              className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                              className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950"
                               title="Ver análisis de rendimiento"
                             >
                               <TrendingUp className="w-4 h-4" />
@@ -450,7 +446,7 @@ export default function Admin() {
                             variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(u)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
@@ -458,7 +454,7 @@ export default function Admin() {
                             variant="ghost"
                             size="icon"
                             onClick={() => openDeleteDialog(u)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                             disabled={u.id === user?.id}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -529,7 +525,7 @@ export default function Admin() {
                 id="new-role"
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as 'student' | 'admin' })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="student">Estudiante</option>
                 <option value="admin">Administrador</option>
@@ -540,7 +536,7 @@ export default function Admin() {
             <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleAddUser} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleAddUser} className="bg-primary hover:bg-primary/90">
               Crear Usuario
             </Button>
           </DialogFooter>
@@ -601,18 +597,30 @@ export default function Admin() {
                 id="edit-role"
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as 'student' | 'admin' })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="student">Estudiante</option>
                 <option value="admin">Administrador</option>
               </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-expires">Fecha de Expiración *</Label>
+              <Input
+                id="edit-expires"
+                type="date"
+                value={formData.expiresAt}
+                onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">
+                Fecha hasta la que el usuario podrá acceder a la plataforma.
+              </p>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleEditUser} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleEditUser} className="bg-primary hover:bg-primary/90">
               Guardar Cambios
             </Button>
           </DialogFooter>
