@@ -33,7 +33,8 @@ import {
   TrendingUp,
   Moon,
   Sun,
-  Calendar
+  Calendar,
+  Filter
 } from 'lucide-react';
 import { getUsers, saveUser, deleteUser, getDefaultExpirationDate, isUserExpired } from '@/services/storage';
 import StudentAnalytics from '@/components/StudentAnalytics';
@@ -45,6 +46,7 @@ export default function Admin() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userFilter, setUserFilter] = useState<'all' | 'valid' | 'expiring' | 'expired'>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -83,11 +85,37 @@ export default function Admin() {
     navigate('/');
   };
 
-  const filteredUsers = users.filter(u => 
-    u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Función para verificar si un usuario está próximo a caducar (menos de 7 días)
+  const isExpiringSoon = (user: UserType): boolean => {
+    if (isUserExpired(user)) return false;
+    const now = new Date();
+    const expiresAt = new Date(user.expiresAt);
+    const diffTime = expiresAt.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7 && diffDays > 0;
+  };
+
+  const filteredUsers = users.filter(u => {
+    // Filtro de búsqueda
+    const matchesSearch = 
+      u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (!matchesSearch) return false;
+    
+    // Filtro de estado
+    switch (userFilter) {
+      case 'valid':
+        return !isUserExpired(u) && !isExpiringSoon(u);
+      case 'expiring':
+        return isExpiringSoon(u);
+      case 'expired':
+        return isUserExpired(u);
+      default:
+        return true;
+    }
+  });
 
   const handleAddUser = () => {
     // Validar
@@ -365,6 +393,60 @@ export default function Admin() {
             </CardContent>
           </Card>
         </div>
+
+        {/* User Filters */}
+        <Card className="mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground mr-2">Filtrar por:</span>
+              <Button
+                variant={userFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setUserFilter('all')}
+              >
+                Todos
+                <Badge variant="secondary" className="ml-2">{users.length}</Badge>
+              </Button>
+              <Button
+                variant={userFilter === 'valid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setUserFilter('valid')}
+                className="border-green-300 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950"
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                Válidos
+                <Badge variant="secondary" className="ml-2">
+                  {users.filter(u => !isUserExpired(u) && !isExpiringSoon(u)).length}
+                </Badge>
+              </Button>
+              <Button
+                variant={userFilter === 'expiring' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setUserFilter('expiring')}
+                className="border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950"
+              >
+                <AlertCircle className="w-4 h-4 mr-1" />
+                Próximos a caducar
+                <Badge variant="secondary" className="ml-2">
+                  {users.filter(u => isExpiringSoon(u)).length}
+                </Badge>
+              </Button>
+              <Button
+                variant={userFilter === 'expired' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setUserFilter('expired')}
+                className="border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950"
+              >
+                <AlertCircle className="w-4 h-4 mr-1" />
+                Caducados
+                <Badge variant="secondary" className="ml-2">
+                  {users.filter(u => isUserExpired(u)).length}
+                </Badge>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Users Table */}
         <Card>

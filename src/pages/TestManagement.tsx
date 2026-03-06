@@ -316,9 +316,9 @@ export default function TestManagement() {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
@@ -326,8 +326,8 @@ export default function TestManagement() {
                 <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Autoescuela Test</h1>
-                <p className="text-xs text-gray-500">Gestión de Tests</p>
+                <h1 className="text-xl font-bold text-foreground">Autoescuela Test</h1>
+                <p className="text-xs text-muted-foreground">Gestión de Tests</p>
               </div>
             </div>
 
@@ -337,7 +337,7 @@ export default function TestManagement() {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-muted-foreground hover:text-foreground"
                 title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
               >
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
@@ -355,11 +355,11 @@ export default function TestManagement() {
               
               <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">Administrador</p>
+                  <p className="text-sm font-medium text-foreground">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">Administrador</p>
                 </div>
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary" />
                 </div>
               </div>
 
@@ -367,7 +367,7 @@ export default function TestManagement() {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-gray-500 hover:text-red-600 hover:bg-red-50"
+                className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
@@ -380,23 +380,23 @@ export default function TestManagement() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Gestión de Tests
           </h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Administra temas, tests y preguntas. Los elementos eliminados se marcan como inactivos para preservar el historial.
           </p>
         </div>
 
         {/* Messages */}
         {message && (
-          <Alert className={`mb-6 ${message.type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <Alert className={`mb-6 ${message.type === 'success' ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-900' : 'bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-900'}`}>
             {message.type === 'success' ? (
-              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
             ) : (
-              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
             )}
-            <AlertDescription className={message.type === 'success' ? 'text-green-700' : 'text-red-700'}>
+            <AlertDescription className={message.type === 'success' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}>
               {message.text}
             </AlertDescription>
           </Alert>
@@ -408,25 +408,11 @@ export default function TestManagement() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Total Temas</p>
-                  <p className="text-3xl font-bold text-gray-900">{themes.filter(t => t.isActive !== false).length}</p>
+                  <p className="text-muted-foreground text-sm">Total Temas</p>
+                  <p className="text-3xl font-bold text-card-foreground">{themes.filter(t => t.isActive !== false).length}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <LayoutList className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-500 text-sm">Total Tests</p>
-                  <p className="text-3xl font-bold text-gray-900">{tests.filter(t => t.isActive !== false).length}</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <LayoutList className="w-6 h-6 text-primary" />
                 </div>
               </div>
             </CardContent>
@@ -436,11 +422,25 @@ export default function TestManagement() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-sm">Total Preguntas</p>
-                  <p className="text-3xl font-bold text-gray-900">{questions.filter(q => q.isActive !== false).length}</p>
+                  <p className="text-muted-foreground text-sm">Total Tests</p>
+                  <p className="text-3xl font-bold text-card-foreground">{tests.filter(t => t.isActive !== false).length}</p>
                 </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <FileQuestion className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm">Total Preguntas</p>
+                  <p className="text-3xl font-bold text-card-foreground">{questions.filter(q => q.isActive !== false).length}</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                  <FileQuestion className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                 </div>
               </div>
             </CardContent>
@@ -488,7 +488,7 @@ export default function TestManagement() {
                   <TableBody>
                     {themes.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                           No hay temas registrados
                         </TableCell>
                       </TableRow>
@@ -499,7 +499,7 @@ export default function TestManagement() {
                           <TableCell className="max-w-xs truncate">{theme.description}</TableCell>
                           <TableCell>{getTestsByTheme(theme.id, true).length}</TableCell>
                           <TableCell>
-                            <Badge className={theme.isActive !== false ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
+                            <Badge className={theme.isActive !== false ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}>
                               {theme.isActive !== false ? 'Activo' : 'Inactivo'}
                             </Badge>
                           </TableCell>
@@ -509,7 +509,7 @@ export default function TestManagement() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => toggleThemeActive(theme)}
-                                className={theme.isActive !== false ? 'text-gray-400 hover:text-gray-600' : 'text-green-600 hover:text-green-700'}
+                                className={theme.isActive !== false ? 'text-muted-foreground hover:text-foreground' : 'text-green-600 hover:text-green-700'}
                               >
                                 {theme.isActive !== false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </Button>
@@ -517,7 +517,7 @@ export default function TestManagement() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => openThemeDialog(theme)}
-                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                               >
                                 <Edit2 className="w-4 h-4" />
                               </Button>
@@ -525,7 +525,7 @@ export default function TestManagement() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => openDeleteDialog('theme', theme)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -572,7 +572,7 @@ export default function TestManagement() {
                         {isExpanded && (
                           <div className="p-4">
                             {themeTests.length === 0 ? (
-                              <p className="text-gray-500 text-center py-4">No hay tests en este tema</p>
+                              <p className="text-muted-foreground text-center py-4">No hay tests en este tema</p>
                             ) : (
                               <Table>
                                 <TableHeader>
@@ -593,7 +593,7 @@ export default function TestManagement() {
                                       <TableCell>{test.timeLimit} min</TableCell>
                                       <TableCell>{test.passingScore}/{test.questions.length}</TableCell>
                                       <TableCell>
-                                        <Badge className={test.isActive !== false ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}>
+                                        <Badge className={test.isActive !== false ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}>
                                           {test.isActive !== false ? 'Activo' : 'Inactivo'}
                                         </Badge>
                                       </TableCell>
@@ -603,7 +603,7 @@ export default function TestManagement() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => toggleTestActive(test)}
-                                            className={test.isActive !== false ? 'text-gray-400 hover:text-gray-600' : 'text-green-600 hover:text-green-700'}
+                                            className={test.isActive !== false ? 'text-muted-foreground hover:text-foreground' : 'text-green-600 hover:text-green-700'}
                                           >
                                             {test.isActive !== false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                           </Button>
@@ -611,7 +611,7 @@ export default function TestManagement() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => openTestDialog(test)}
-                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                                           >
                                             <Edit2 className="w-4 h-4" />
                                           </Button>
@@ -619,7 +619,7 @@ export default function TestManagement() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => openDeleteDialog('test', test)}
-                                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                                           >
                                             <Trash2 className="w-4 h-4" />
                                           </Button>
@@ -672,32 +672,32 @@ export default function TestManagement() {
                         {isExpanded && (
                           <div className="p-4">
                             {themeQuestions.length === 0 ? (
-                              <p className="text-gray-500 text-center py-4">No hay preguntas en este tema</p>
+                              <p className="text-muted-foreground text-center py-4">No hay preguntas en este tema</p>
                             ) : (
                               <div className="space-y-3">
                                 {themeQuestions.map((question) => (
                                   <div 
                                     key={question.id} 
-                                    className={`p-4 border rounded-lg ${question.isActive === false ? 'opacity-50 bg-gray-50' : 'bg-white'}`}
+                                    className={`p-4 border rounded-lg ${question.isActive === false ? 'opacity-50 bg-muted' : 'bg-card'}`}
                                   >
                                     <div className="flex items-start justify-between">
                                       <div className="flex-1">
-                                        <p className="font-medium text-gray-900 mb-2">{question.text}</p>
+                                        <p className="font-medium text-foreground mb-2">{question.text}</p>
                                         <div className="grid grid-cols-2 gap-2 mb-3">
                                           {question.options.map((option, idx) => (
                                             <div 
                                               key={idx} 
                                               className={`text-sm px-3 py-2 rounded ${
                                                 idx === question.correctAnswer 
-                                                  ? 'bg-green-100 text-green-700 border border-green-300' 
-                                                  : 'bg-gray-100 text-gray-600'
+                                                  ? 'bg-green-100 text-green-700 border border-green-300 dark:bg-green-900 dark:text-green-300 dark:border-green-700' 
+                                                  : 'bg-muted text-muted-foreground'
                                               }`}
                                             >
                                               {String.fromCharCode(65 + idx)}. {option}
                                             </div>
                                           ))}
                                         </div>
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-muted-foreground">
                                           <strong>Explicación:</strong> {question.explanation}
                                         </p>
                                       </div>
@@ -706,7 +706,7 @@ export default function TestManagement() {
                                           variant="ghost"
                                           size="icon"
                                           onClick={() => toggleQuestionActive(question)}
-                                          className={question.isActive !== false ? 'text-gray-400 hover:text-gray-600' : 'text-green-600 hover:text-green-700'}
+                                          className={question.isActive !== false ? 'text-muted-foreground hover:text-foreground' : 'text-green-600 hover:text-green-700'}
                                         >
                                           {question.isActive !== false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                         </Button>
@@ -714,7 +714,7 @@ export default function TestManagement() {
                                           variant="ghost"
                                           size="icon"
                                           onClick={() => openQuestionDialog(question)}
-                                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
                                         >
                                           <Edit2 className="w-4 h-4" />
                                         </Button>
@@ -722,7 +722,7 @@ export default function TestManagement() {
                                           variant="ghost"
                                           size="icon"
                                           onClick={() => openDeleteDialog('question', question)}
-                                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                                         >
                                           <Trash2 className="w-4 h-4" />
                                         </Button>
@@ -775,7 +775,7 @@ export default function TestManagement() {
               <select
                 value={themeForm.icon}
                 onChange={(e) => setThemeForm({ ...themeForm, icon: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {iconOptions.map(icon => (
                   <option key={icon.value} value={icon.value}>{icon.label}</option>
@@ -821,7 +821,7 @@ export default function TestManagement() {
               <select
                 value={testForm.themeId}
                 onChange={(e) => setTestForm({ ...testForm, themeId: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {themes.filter(t => t.isActive !== false).map(theme => (
                   <option key={theme.id} value={theme.id}>{theme.title}</option>
@@ -881,7 +881,7 @@ export default function TestManagement() {
               <select
                 value={questionForm.themeId}
                 onChange={(e) => setQuestionForm({ ...questionForm, themeId: e.target.value })}
-                className="w-full h-10 px-3 rounded-md border border-gray-200"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {themes.filter(t => t.isActive !== false).map(theme => (
                   <option key={theme.id} value={theme.id}>{theme.title}</option>
@@ -919,7 +919,7 @@ export default function TestManagement() {
                 value={questionForm.explanation}
                 onChange={(e) => setQuestionForm({ ...questionForm, explanation: e.target.value })}
                 placeholder="Explicación de la respuesta correcta..."
-                className="w-full px-3 py-2 rounded-md border border-gray-200 min-h-[80px] resize-none"
+                className="w-full px-3 py-2 rounded-md border border-input bg-background min-h-[80px] resize-none focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>

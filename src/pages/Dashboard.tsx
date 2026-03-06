@@ -138,6 +138,17 @@ export default function Dashboard() {
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </Button>
               
+              {/* Botón Libro de Texto */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/textbook')}
+                className="hidden sm:flex items-center gap-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                Libro de Texto
+              </Button>
+              
               {isAdmin && (
                 <Button
                   variant="outline"
@@ -339,7 +350,7 @@ export default function Dashboard() {
                                     <Button
                                       size="sm"
                                       variant="outline"
-                                      onClick={() => navigate(`/admin/tests?edit=${test.id}`)}
+                                      onClick={() => navigate(`/admin/tests/edit/${test.id}`)}
                                       className="border-orange-300 text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950"
                                     >
                                       <Edit2 className="w-4 h-4 mr-1" />

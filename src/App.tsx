@@ -5,7 +5,9 @@ import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import Admin from '@/pages/Admin';
 import TestManagement from '@/pages/TestManagement';
+import TestEditor from '@/pages/TestEditor';
 import Test from '@/pages/Test';
+import Textbook from '@/pages/Textbook';
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/tests" element={<TestManagement />} />
+            <Route path="/admin/tests/edit/:testId" element={<TestEditor />} />
             <Route path="/test/:testId" element={<Test />} />
+            <Route path="/textbook" element={<Textbook />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
