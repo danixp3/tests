@@ -326,7 +326,7 @@ export default function TestManagement() {
                 <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Autoescuela Test</h1>
+                <h1 className="text-xl font-bold text-foreground">Autoescuela Xinzo Tests</h1>
                 <p className="text-xs text-muted-foreground">Gestión de Tests</p>
               </div>
             </div>

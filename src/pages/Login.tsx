@@ -58,16 +58,16 @@ export default function Login() {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white dark:bg-gray-800 rounded-full shadow-lg mb-4">
             <Car className="w-10 h-10 text-blue-600 dark:text-blue-400" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Autoescuela Test</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Autoescuela Xinzo Tests</h1>
           <p className="text-blue-100 dark:text-gray-300">Plataforma de tests para tu carnet de conducir</p>
         </div>
 
         <Card className="border-0 shadow-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl font-bold text-center text-gray-800">
+            <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">
               Iniciar Sesión
             </CardTitle>
-            <CardDescription className="text-center text-gray-500">
+            <CardDescription className="text-center text-gray-500 dark:text-gray-400">
               Introduce tus credenciales para acceder
             </CardDescription>
           </CardHeader>
@@ -170,7 +170,7 @@ export default function Login() {
         </Card>
 
         <p className="text-center text-blue-200 text-sm mt-6">
-          © 2024 Autoescuela Test. Todos los derechos reservados.
+          © 2024 Autoescuela Xinzo Tests. Todos los derechos reservados.
         </p>
       </div>
     </div>

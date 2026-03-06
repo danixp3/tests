@@ -34,7 +34,11 @@ import {
   Moon,
   Sun,
   Calendar,
-  Filter
+  Filter,
+  Euro,
+  Settings,
+  TrendingUp as TrendingUpIcon,
+  Save
 } from 'lucide-react';
 import { getUsers, saveUser, deleteUser, getDefaultExpirationDate, isUserExpired } from '@/services/storage';
 import StudentAnalytics from '@/components/StudentAnalytics';
@@ -65,6 +69,12 @@ export default function Admin() {
     email: '',
     role: 'student' as 'student' | 'admin',
     expiresAt: '',
+  });
+
+  // Pricing configuration
+  const [pricingConfig, setPricingConfig] = useState(() => {
+    const saved = localStorage.getItem('autoescuela_pricing_config');
+    return saved ? JSON.parse(saved) : { price: 50, frequencyMonths: 3 };
   });
 
   useEffect(() => {
@@ -243,6 +253,21 @@ export default function Admin() {
     setIsAddDialogOpen(true);
   };
 
+  // Save pricing configuration
+  const savePricingConfig = () => {
+    localStorage.setItem('autoescuela_pricing_config', JSON.stringify(pricingConfig));
+    setMessage({ type: 'success', text: 'Configuración de precios guardada' });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  // Calculate earnings
+  const calculateEarnings = () => {
+    const validUsers = users.filter(u => u.role === 'student' && !isUserExpired(u)).length;
+    const monthlyRevenue = (validUsers * pricingConfig.price) / pricingConfig.frequencyMonths;
+    const yearlyRevenue = monthlyRevenue * 12;
+    return { validUsers, monthlyRevenue, yearlyRevenue };
+  };
+
   if (!isAdmin) return null;
 
   return (
@@ -256,7 +281,7 @@ export default function Admin() {
                 <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Autoescuela Test</h1>
+                <h1 className="text-xl font-bold text-foreground">Autoescuela Xinzo Tests</h1>
                 <p className="text-xs text-muted-foreground">Panel de Administración</p>
               </div>
             </div>
@@ -549,6 +574,81 @@ export default function Admin() {
                 )}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        {/* Pricing Configuration Section */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="w-5 h-5" />
+              Configuración de Precios
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-2">
+                <Label htmlFor="price" className="flex items-center gap-2">
+                  <Euro className="w-4 h-4" />
+                  Precio por usuario (€)
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  min={1}
+                  value={pricingConfig.price}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, price: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="frequency">Frecuencia de cobro (meses)</Label>
+                <Input
+                  id="frequency"
+                  type="number"
+                  min={1}
+                  max={12}
+                  value={pricingConfig.frequencyMonths}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, frequencyMonths: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+            </div>
+
+            {/* Earnings Calculation */}
+            <div className="bg-muted rounded-lg p-6">
+              <h4 className="font-semibold mb-4 flex items-center gap-2">
+                <TrendingUpIcon className="w-5 h-5" />
+                Cálculo de Ganancias
+              </h4>
+              {(() => {
+                const { validUsers, monthlyRevenue, yearlyRevenue } = calculateEarnings();
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="bg-card rounded-lg p-4 text-center">
+                      <p className="text-muted-foreground text-sm mb-1">Usuarios válidos</p>
+                      <p className="text-3xl font-bold text-primary">{validUsers}</p>
+                    </div>
+                    <div className="bg-card rounded-lg p-4 text-center">
+                      <p className="text-muted-foreground text-sm mb-1">Ingreso mensual estimado</p>
+                      <p className="text-3xl font-bold text-green-600">{monthlyRevenue.toFixed(2)}€</p>
+                    </div>
+                    <div className="bg-card rounded-lg p-4 text-center">
+                      <p className="text-muted-foreground text-sm mb-1">Ingreso anual estimado</p>
+                      <p className="text-3xl font-bold text-blue-600">{yearlyRevenue.toFixed(2)}€</p>
+                    </div>
+                  </div>
+                );
+              })()}
+              <p className="text-xs text-muted-foreground mt-4">
+                * El cálculo se basa en los usuarios con licencia vigente. Precio: {pricingConfig.price}€ cada {pricingConfig.frequencyMonths} mes(es).
+              </p>
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <Button onClick={savePricingConfig}>
+                <Save className="w-4 h-4 mr-2" />
+                Guardar Configuración
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </main>

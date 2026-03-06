@@ -117,36 +117,35 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Car className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <Car className="w-6 h-6 text-primary-foreground" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">Autoescuela Test</h1>
+              <div className="hidden sm:block">
+                <h1 className="text-xl font-bold text-foreground">Autoescuela Xinzo Tests</h1>
                 <p className="text-xs text-muted-foreground">Plataforma de aprendizaje</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {/* Botón Modo Oscuro */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
                 className="text-muted-foreground hover:text-foreground"
-                title={theme === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
               >
                 {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </Button>
               
-              {/* Botón Libro de Texto */}
+              {/* Botón Libro de Texto - visible en todos los tamaños */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => navigate('/textbook')}
-                className="hidden sm:flex items-center gap-2"
+                className="flex items-center gap-2"
               >
                 <BookOpen className="w-4 h-4" />
-                Libro de Texto
+                <span className="hidden sm:inline">Libro de Texto</span>
               </Button>
               
               {isAdmin && (
@@ -154,17 +153,17 @@ export default function Dashboard() {
                   variant="outline"
                   size="sm"
                   onClick={() => navigate('/admin')}
-                  className="hidden sm:flex items-center gap-2"
+                  className="flex items-center gap-2"
                 >
                   <Users className="w-4 h-4" />
-                  Gestión de Usuarios
+                  <span className="hidden sm:inline">Gestión</span>
                 </Button>
               )}
               
-              <div className="flex items-center gap-3">
-                <div className="text-right hidden sm:block">
+              <div className="hidden sm:flex items-center gap-3">
+                <div className="text-right">
                   <p className="text-sm font-medium text-foreground">{user.name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{user.role === 'admin' ? 'Administrador' : 'Estudiante'}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{user.role === 'admin' ? 'Admin' : 'Estudiante'}</p>
                 </div>
                 <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                   <User className="w-5 h-5 text-primary" />
@@ -175,7 +174,7 @@ export default function Dashboard() {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                className="text-muted-foreground hover:text-red-600"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
